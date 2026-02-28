@@ -9,7 +9,9 @@
 #define PRINT_SPEED 300 // Tempo der Tekstanzeige
 
 // Funktionen deklarieren
-void print_centered(const char *text, bool slow);
+void print_slow(const char *text);
+void print_line(const char *text, bool slow, bool centered);
+void print_paragraph(const char *text, bool slow, bool centered);
 void read_input(unsigned char *buf);
 void str_upper(unsigned char *s);
 void parse(char *verb, char*noun);
@@ -38,11 +40,11 @@ int main(void) {
     clrscr();
 
     // Wilkommentekst anzeigen
-    print_centered("========== Feras the guy =========", true);
-    print_centered("=        A game by Zsombor       =", true);
-    print_centered("==========      2026     =========", true);
+    print_line("========== Feras the guy =========", true, true);
+    print_line("=        A game by Zsombor       =", true, true);
+    print_line("==========      2026     =========", true, true);
     cprintf("\r\n");
-    print_centered("Type 'start' to play", true);
+    print_line("Type 'start' to play", true, true);
 
     while(gameOpen) {
         cprintf("> "); // Prompt
@@ -61,8 +63,8 @@ int main(void) {
     // Anzeige löschen
     clrscr();
 
-    print_centered("Goodbye!", false);
-    print_centered("PRESS RUN/STOP + RESTORE", false);
+    print_line("Goodbye!", false, true);
+    print_line("PRESS RUN/STOP + RESTORE", false, true);
     while(true) {}
 
     return 0;
@@ -70,40 +72,16 @@ int main(void) {
 }
 
 
-void print_centered(const char *text, bool slow) {
-    
-    // Center berechnen
-    unsigned int len = strlen(text);
-    unsigned char padding = (40 - len) / 2;
-
-    // Variabel für for-schleife erstellen
-    int i = 0;
-    
-    // Leerzeichen zum Text hinzufügen
-    for (i = 0; i < padding; i++) {
-        cprintf(" ");
+/* Gibt eine Zeile aus, optional zentriert und/oder langsam */
+void print_line(const char *text, bool slow, bool centered) {
+    int i;
+    if (centered) {
+        unsigned char padding = (40 - strlen(text)) / 2;
+        for (i = 0; i < padding; i++) cputc(' ');
     }
-
-
-    if (slow) {
-        volatile int i; // Keine Optimierung
-        int j;
-        
-        for (j = 0; text[j] != '\0'; j++) {
-            
-            if (text[j] == ' ') {
-                cputc(' ');
-            } else {
-                play_click();
-                cputc(text[j]);
-                for (i = 0; i < PRINT_SPEED; i++); // Leer For-Schleife 
-            }
-        }
-        cprintf("\r\n"); // Newline setzen
-
-    } else {
-        cprintf("%s\r\n", text); // Newline setzen
-    } 
+    if (slow) print_slow(text);
+    else cprintf("%s", text);
+    cprintf("\r\n");
 }
 
 void read_input(unsigned char *buf) {
@@ -154,18 +132,17 @@ void parse(char *verb, char *noun) {
     }
 }
 
+/* Basisfunction: Gibt Text langsam aus */
 void print_slow(const char *text) {
-    volatile int i; // Keine Optimierung
-    int j;
-    
+    volatile int i;
+    static int j;
     for (j = 0; text[j] != '\0'; j++) {
-            
         if (text[j] == ' ') {
             cputc(' ');
         } else {
             play_click();
             cputc(text[j]);
-            for (i = 0; i < PRINT_SPEED; i++); // Leer For-Schleife 
+            for (i = 0; i < PRINT_SPEED; i++);
         }
     }
 }
@@ -173,7 +150,41 @@ void print_slow(const char *text) {
 void start() {
     clrscr(); // Anzeige löschen
 
-    print_slow("This feature is not implemented yet.\r\n");
-    print_slow("Please check back later when it has\r\n");
-    print_slow("been completed.\r\n");
+    print_paragraph("This feature is not implemented yet. Please check back later when it has been completed by the developer. :)", true, false);
+}
+
+/* Gibt einen Absatz mit Zeilenumbruch aus, optional zentriert und/oder langsam */
+void print_paragraph(const char *text, bool slow, bool centered) {
+    static char buf[256];
+    static char linebuf[41];
+    char *word;
+    unsigned char col = 0;
+    unsigned char wordlen;
+
+    strcpy(buf, text);
+    linebuf[0] = '\0';
+    word = strtok(buf, " ");
+
+    while (word != NULL) {
+        wordlen = strlen(word);
+
+        if (col + wordlen > 38) {
+            /* Leerzeichen am Ende entfernen */
+            if (col > 0) linebuf[col - 1] = '\0';
+            print_line(linebuf, slow, centered);
+            linebuf[0] = '\0';
+            col = 0;
+        }       
+
+        strcat(linebuf, word);
+        strcat(linebuf, " ");
+        col += wordlen + 1;
+
+        word = strtok(NULL, " ");
+    }
+
+    if (col > 0) {
+        linebuf[col - 1] = '\0';
+        print_line(linebuf, slow, centered);
+    }
 }
