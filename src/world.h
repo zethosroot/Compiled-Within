@@ -1,10 +1,6 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#define NUM_ROOMS 3
-#define NUM_ITEMS 3
-#define MAX_INV   5
-
 // Raum
 typedef struct {
     const char *name;
