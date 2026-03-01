@@ -160,6 +160,7 @@ void parse(char *verb, char *noun) {
         print_line("INV                -  Show inventory", true, false);
         print_line("LOOK               -  Look around", true, false);
         print_line("DROP <ITEM>        -  Drop an item", true, false);
+        print_line("DROP               -  Quit the game", true, false);
     } else {
         clrscr();
         cprintf("\r\nUNKNOWN: %s\r\n", verb);
