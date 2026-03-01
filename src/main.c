@@ -44,6 +44,7 @@ int main(void) {
 
     while(gameOpen) {
         if (hasStarted){
+            print_line("Type 'help' for a available commands\r\n", false, false);
             print_line("WHAT DO YOU DO?", true, false);
         }
         cprintf("\r\n> "); // Prompt
@@ -238,7 +239,7 @@ void parse(char *verb, char *noun) {
         if (!found) {
             cprintf("ITEM NOT IN INVENTORY\r\n\r\n");
         }
-    } else if (strcmp(verb, "INVENTORY") == 0) {
+    } else if (strcmp(verb, "INV") == 0) {
         clrscr();
         found = false;
         print_line("INVENTORY: ", true, true);
@@ -253,7 +254,16 @@ void parse(char *verb, char *noun) {
             cprintf("\r\nNO ITEMS IN INVENTORY\r\n\r\n");
         }
 
+    } else if (strcmp(verb, "HELP") == 0){
+        clrscr();
+        print_line("AVAILABLE COMMANDS\r\n", true, true);
+        print_line("DROP <ITEM NAME>   -  Drop an item", true, false);
+        print_line("GO   <LOCATION>    -  Go somewhere ", true, false);
+        print_line("INV                -  Show inventory ", true, false);
+        print_line("LOOK               -  Look around ", true, false);
+        print_line("DROP <ITEM>        -  Drop an item ", true, false);
     } else {
+        clrscr();
         cprintf("\r\nUNKNOWN: %s\r\n", verb);
     }
 }
