@@ -44,7 +44,6 @@ int main(void) {
 
     while(gameOpen) {
         if (hasStarted){
-            print_line("Type 'help' for a available commands\r\n", false, false);
             print_line("WHAT DO YOU DO?", true, false);
         }
         cprintf("\r\n> "); // Prompt

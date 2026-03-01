@@ -7,6 +7,8 @@
 #include "macros.h"
 #include "print.h"
 
+bool hintShown = false;
+
 void parse(char *verb, char *noun) {
     
     unsigned char next_room = 255;
@@ -105,6 +107,11 @@ void parse(char *verb, char *noun) {
             cprintf ("NONE\r\n\r\n");
         }
 
+        if (!hintShown) {
+            cprintf("\r\n(Type 'help' for available commands)\r\n");
+            hintShown = true;
+        }
+
         cprintf("\r\nEXITS: ");
         if (rooms[current_room].east != 255)  cprintf("EAST ");
         if (rooms[current_room].west != 255)  cprintf("WEST ");
@@ -149,10 +156,10 @@ void parse(char *verb, char *noun) {
         clrscr();
         print_line("AVAILABLE COMMANDS\r\n", true, true);
         print_line("DROP <ITEM NAME>   -  Drop an item", true, false);
-        print_line("GO   <LOCATION>    -  Go somewhere ", true, false);
-        print_line("INV                -  Show inventory ", true, false);
-        print_line("LOOK               -  Look around ", true, false);
-        print_line("DROP <ITEM>        -  Drop an item ", true, false);
+        print_line("GO   <LOCATION>    -  Go somewhere", true, false);
+        print_line("INV                -  Show inventory", true, false);
+        print_line("LOOK               -  Look around", true, false);
+        print_line("DROP <ITEM>        -  Drop an item", true, false);
     } else {
         clrscr();
         cprintf("\r\nUNKNOWN: %s\r\n", verb);
