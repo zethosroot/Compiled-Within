@@ -36,9 +36,12 @@ int main(void) {
     clrscr();
 
     // Wilkommentekst anzeigen
-    print_line("========== Feras the guy =========", true, true);
-    print_line("=        A game by Zsombor       =", true, true);
-    print_line("==========      2026     =========", true, true);
+    print_line("=================================", true, true);
+    print_line("=        Compiled Within        =", true, true);
+    print_line("=================================", true, true);
+    print_line("A game by zethosroot", true, true);
+    cprintf("\r\n");
+    print_line("https://github.com/zethosroot", true, true);
     cprintf("\r\n");
     print_line("Type 'start' to play", true, true);
 
