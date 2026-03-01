@@ -3,10 +3,12 @@
 ![Platform](https://img.shields.io/badge/platform-Commodore%2064-blue)
 ![Language](https://img.shields.io/badge/language-C%20%2F%206502%20ASM-lightgrey)
 ![Compiler](https://img.shields.io/badge/compiler-cc65-orange)
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-early%20development-yellow)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > *A text adventure game for the Commodore 64.*
+
+> ⚠️ **Work in progress.** This game is actively being developed and is not yet complete.
 
 You are a programmer. Something has gone terribly wrong. You have been **compiled within your own code** — trapped inside the very program you wrote. Navigate the strange digital world of your own creation, find the tools you need, and escape before the process terminates.
 
@@ -79,7 +81,7 @@ compiled-within/
 │   ├── input.c      — Keyboard input handler
 │   ├── sound.c      — SID chip sound effects
 │   ├── world.c      — Room and item data
-│   └── macros.h     — Shared constants
+│   └── config.h     — Shared constants
 ├── assets/          — Bitmap art (WIP)
 ├── adventure.cfg    — cc65 linker configuration
 └── Makefile
