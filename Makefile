@@ -7,6 +7,7 @@ SRC     = src/main.c src/sound.c src/world.c
 all: $(TARGET)
 
 $(TARGET): $(SRC)
+	mkdir -p build
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 
 run: $(TARGET)
