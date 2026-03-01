@@ -4,7 +4,7 @@
 #include "parser.h"
 #include "main.h"
 #include "world.h"
-#include "macros.h"
+#include "config.h"
 #include "print.h"
 
 bool hintShown = false;

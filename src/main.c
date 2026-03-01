@@ -8,7 +8,7 @@
 #include "parser.h"
 #include "print.h"
 #include "input.h"
-#include "macros.h"
+#include "config.h"
 
 // Globale variablen
 bool gameOpen = true;

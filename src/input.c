@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "input.h"
-#include "macros.h"
+#include "config.h"
 
 void read_input(unsigned char *buf) {
     unsigned char i = 0;

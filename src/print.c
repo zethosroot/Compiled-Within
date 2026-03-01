@@ -3,7 +3,7 @@
 #include <string.h>
 #include "sound.h"
 #include "print.h"
-#include "macros.h"
+#include "config.h"
 
 
 // Basisfunction: Gibt Text langsam aus

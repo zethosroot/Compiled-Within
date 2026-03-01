@@ -3,3 +3,4 @@ build/
 *.prg
 *.o
 *.d
+*.tap
