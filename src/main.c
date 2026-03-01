@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "sound.h"
+#include "world.h"
 
 #define INPUT_LENGTH 40 // Länge der Eingabe setzen 
 #define PRINT_SPEED 300 // Tempo der Tekstanzeige
@@ -19,6 +20,9 @@ void start();
 
 // Globale variablen
 bool gameOpen = true;
+bool hasStarted = false;
+unsigned char current_room = 0;
+unsigned char next_room = 255;
 
 /**
  * Hauptfunktion
@@ -47,7 +51,10 @@ int main(void) {
     print_line("Type 'start' to play", true, true);
 
     while(gameOpen) {
-        cprintf("> "); // Prompt
+        if (hasStarted){
+            print_line("WHAT DO YOU DO?", true, false);
+        }
+        cprintf("\r\n> "); // Prompt
         read_input(inputText); // Texteingabe lesen
         str_upper(inputText); // Text Großbuchstaben setzen
 
@@ -117,22 +124,151 @@ void str_upper(unsigned char *s) {
 }
 
 void parse(char *verb, char *noun) {
+    
+    unsigned char next_room = 255;
+    int i; // Für die For-Schleife
+    bool found = false; // Ist das Item gefunden?
+    bool itemFound = false; // Etwas Items gefunden
+    
     if (verb == NULL) return;
     
     if (strcmp(verb, "GO") == 0) {
-        cprintf("\r\nGO: %s\r\n", noun ? noun : "WHERE?");
+        
+        if (strcmp(noun, "EAST") == 0) {
+            next_room = rooms[current_room].east;
+            
+            if (next_room == 255) {
+                clrscr();
+                print_line("YOU CAN'T GO THAT WAY", true, false);
+            } else {
+                current_room = next_room;
+                parse("LOOK", NULL);
+            }
+        }
+
+        if (strcmp(noun, "WEST") == 0) {
+            next_room = rooms[current_room].west;
+            
+            if (next_room == 255) {
+                clrscr();
+                print_line("YOU CAN'T GO THAT WAY", true, false);
+            } else {
+                current_room = next_room;
+                parse("LOOK", NULL);
+            }
+        }
+        
+        if (strcmp(noun, "NORTH") == 0) {
+            next_room = rooms[current_room].north;
+            
+            if (next_room == 255) {
+                clrscr();
+                print_line("YOU CAN'T GO THAT WAY", true, false);
+            } else {
+                current_room = next_room;
+                parse("LOOK", NULL);
+            }
+        }
+        
+        if (strcmp(noun, "SOUTH") == 0) {
+            next_room = rooms[current_room].south;
+
+            if (next_room == 255) {
+                clrscr();
+                print_line("YOU CAN'T GO THAT WAY", true, false);
+            } else {
+                current_room = next_room;
+                parse("LOOK", NULL);
+            }
+        } else {
+            clrscr();
+            print_line("GO WHERE?", true, false);
+        }
+
     } else if (strcmp(verb, "TAKE") == 0) {
-        cprintf("\r\nTAKE: %s\r\n", noun ? noun : "WHAT?");
+
+        clrscr();
+        
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == current_room && strcmp(items[i].name, noun) == 0) {
+                items[i].room = 255; // In Inventar
+                print_line("TAKEN", true, false);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+                print_line("YOU DON'T SEE THAT HERE.", true, false);
+            }
+
     } else if (strcmp(verb, "QUIT") == 0) {
         gameOpen = false; // Spiel stoppen
+
+    } else if (strcmp(verb, "LOOK") == 0) {
+        clrscr();
+        print_line(rooms[current_room].name, true, true);
+        cprintf("\r\n");
+        print_paragraph(rooms[current_room].description, true, false);
+        cprintf("\r\n");
+
+        cprintf("ITEMS IN ROOM: ");
+
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == current_room){
+                cprintf("\r\n\r\n%s - %s\r\n", items[i].name, items[i].description);
+                itemFound = true;
+            }
+        }
+
+        if (!itemFound) {
+            cprintf ("NONE\r\n\r\n");
+        }
+
+        cprintf("\r\nEXITS: ");
+        if (rooms[current_room].east != 255)  cprintf("EAST ");
+        if (rooms[current_room].west != 255)  cprintf("WEST ");
+        if (rooms[current_room].north != 255) cprintf("NORTH ");
+        if (rooms[current_room].south != 255) cprintf("SOUTH ");
+        if (rooms[current_room].north == 255 && rooms[current_room].south == 255 &&
+            rooms[current_room].east == 255  && rooms[current_room].west == 255)
+            cprintf("NONE");
+        cprintf("\r\n");
     } else if (strcmp(verb, "START") == 0){
         start(); // Spiel starten
+    } else if (strcmp(verb, "DROP") == 0){
+        clrscr();
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == 255 && strcmp(items[i].name, noun) == 0) items[i].room = current_room;
+            found = true;
+            cprintf("ITEM DROPPED\r\n\r\n");
+            break;
+        }
+
+        if (!found) {
+            cprintf("ITEM NOT IN INVENTORY\r\n\r\n");
+        }
+    } else if (strcmp(verb, "INVENTORY") == 0) {
+        clrscr();
+        found = false;
+        print_line("INVENTORY: ", true, true);
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == 255) {
+                cprintf("\r\n%s - %s\r\n", items[i].name, items[i].description);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            cprintf("\r\nNO ITEMS IN INVENTORY\r\n\r\n");
+        }
+
     } else {
         cprintf("\r\nUNKNOWN: %s\r\n", verb);
     }
 }
 
-/* Basisfunction: Gibt Text langsam aus */
+// Basisfunction: Gibt Text langsam aus
 void print_slow(const char *text) {
     volatile int i;
     static int j;
@@ -150,7 +286,14 @@ void print_slow(const char *text) {
 void start() {
     clrscr(); // Anzeige löschen
 
-    print_paragraph("This feature is not implemented yet. Please check back later when it has been completed by the developer. :)", true, false);
+    if (hasStarted) {
+        print_line("You have already started.", true, false);        
+        return;
+    }
+
+    current_room = 0;
+    hasStarted = true;
+    parse("LOOK", NULL);
 }
 
 /* Gibt einen Absatz mit Zeilenumbruch aus, optional zentriert und/oder langsam */

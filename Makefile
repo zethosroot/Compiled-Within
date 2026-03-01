@@ -2,7 +2,7 @@ CC      = cl65
 CFLAGS = -t c64 -O -C adventure.cfg
 TARGET  = build/adventure.prg
 
-SRC     = src/main.c src/sound.c
+SRC     = src/main.c src/sound.c src/world.c
 
 all: $(TARGET)
 
