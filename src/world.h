@@ -15,7 +15,7 @@ typedef struct {
     unsigned char west;
 } Room;
 
-// Artikel
+// Item
 typedef struct {
     const char *name;
     const char *description;
