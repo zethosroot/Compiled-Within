@@ -5,18 +5,10 @@
 #include <stdbool.h>
 #include "sound.h"
 #include "world.h"
+#include "main.h"
 
 #define INPUT_LENGTH 40 // Länge der Eingabe setzen 
 #define PRINT_SPEED 300 // Tempo der Tekstanzeige
-
-// Funktionen deklarieren
-void print_slow(const char *text);
-void print_line(const char *text, bool slow, bool centered);
-void print_paragraph(const char *text, bool slow, bool centered);
-void read_input(unsigned char *buf);
-void str_upper(unsigned char *s);
-void parse(char *verb, char*noun);
-void start();
 
 // Globale variablen
 bool gameOpen = true;
@@ -145,8 +137,7 @@ void parse(char *verb, char *noun) {
                 parse("LOOK", NULL);
             }
         }
-
-        if (strcmp(noun, "WEST") == 0) {
+        else if (strcmp(noun, "WEST") == 0) {
             next_room = rooms[current_room].west;
             
             if (next_room == 255) {
@@ -157,8 +148,7 @@ void parse(char *verb, char *noun) {
                 parse("LOOK", NULL);
             }
         }
-        
-        if (strcmp(noun, "NORTH") == 0) {
+        else if (strcmp(noun, "NORTH") == 0) {
             next_room = rooms[current_room].north;
             
             if (next_room == 255) {
@@ -168,9 +158,8 @@ void parse(char *verb, char *noun) {
                 current_room = next_room;
                 parse("LOOK", NULL);
             }
-        }
-        
-        if (strcmp(noun, "SOUTH") == 0) {
+        } 
+        else if (strcmp(noun, "SOUTH") == 0) {
             next_room = rooms[current_room].south;
 
             if (next_room == 255) {
@@ -197,10 +186,9 @@ void parse(char *verb, char *noun) {
                 break;
             }
         }
-
         if (!found) {
-                print_line("YOU DON'T SEE THAT HERE.", true, false);
-            }
+            print_line("YOU DON'T SEE THAT HERE.", true, false);
+        }
 
     } else if (strcmp(verb, "QUIT") == 0) {
         gameOpen = false; // Spiel stoppen
@@ -239,10 +227,12 @@ void parse(char *verb, char *noun) {
     } else if (strcmp(verb, "DROP") == 0){
         clrscr();
         for (i = 0; i < NUM_ITEMS; i++) {
-            if (items[i].room == 255 && strcmp(items[i].name, noun) == 0) items[i].room = current_room;
-            found = true;
-            cprintf("ITEM DROPPED\r\n\r\n");
-            break;
+            if (items[i].room == 255 && strcmp(items[i].name, noun) == 0) {
+                items[i].room = current_room;
+                found = true;
+                cprintf("ITEM DROPPED\r\n\r\n");
+                break;
+            } 
         }
 
         if (!found) {
