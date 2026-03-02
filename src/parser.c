@@ -9,18 +9,27 @@
 
 bool hintShown = false;
 
-void parse(char *verb, char *noun) {
+void parse(char *verb, char *object, char *noun) {
     
     unsigned char next_room = 255;
     int i; // Für die For-Schleife
-    bool found = false; // Ist das Item gefunden?
-    bool itemFound = false; // Etwas Items gefunden
+    bool found      = false; // Ist das Item gefunden?
+    //bool itemFound  = false; // Etwas Items gefunden
+    bool hasItem    = false; // Spieler hat das item
+    bool ruleFound  = false; // Regel gefunden
+    bool targetHere = false; // Ziel ist im aktuell Zimmer
     
     if (verb == NULL) return;
     
     if (strcmp(verb, "GO") == 0) {
-        
-        if (strcmp(noun, "EAST") == 0) {
+
+        if (!noun) {
+            clrscr();
+            print_line("GO WHERE?", true, false);
+            return;
+        }
+
+        if (noun && strcmp(noun, "EAST") == 0) {
             next_room = rooms[current_room].east;
             
             if (next_room == 255) {
@@ -28,10 +37,10 @@ void parse(char *verb, char *noun) {
                 print_line("YOU CAN'T GO THAT WAY", true, false);
             } else {
                 current_room = next_room;
-                parse("LOOK", NULL);
+                parse("LOOK", NULL, NULL);
             }
         }
-        else if (strcmp(noun, "WEST") == 0) {
+        else if (noun && strcmp(noun, "WEST") == 0) {
             next_room = rooms[current_room].west;
             
             if (next_room == 255) {
@@ -39,10 +48,10 @@ void parse(char *verb, char *noun) {
                 print_line("YOU CAN'T GO THAT WAY", true, false);
             } else {
                 current_room = next_room;
-                parse("LOOK", NULL);
+                parse("LOOK", NULL, NULL);
             }
         }
-        else if (strcmp(noun, "NORTH") == 0) {
+        else if (noun && strcmp(noun, "NORTH") == 0) {
             next_room = rooms[current_room].north;
             
             if (next_room == 255) {
@@ -50,10 +59,10 @@ void parse(char *verb, char *noun) {
                 print_line("YOU CAN'T GO THAT WAY", true, false);
             } else {
                 current_room = next_room;
-                parse("LOOK", NULL);
+                parse("LOOK", NULL, NULL);
             }
         } 
-        else if (strcmp(noun, "SOUTH") == 0) {
+        else if (noun && strcmp(noun, "SOUTH") == 0) {
             next_room = rooms[current_room].south;
 
             if (next_room == 255) {
@@ -61,23 +70,23 @@ void parse(char *verb, char *noun) {
                 print_line("YOU CAN'T GO THAT WAY", true, false);
             } else {
                 current_room = next_room;
-                parse("LOOK", NULL);
+                parse("LOOK", NULL, NULL);
             }
-        } else {
-            clrscr();
-            print_line("GO WHERE?", true, false);
         }
 
     } else if (strcmp(verb, "TAKE") == 0) {
-
         clrscr();
-        
         for (i = 0; i < NUM_ITEMS; i++) {
             if (items[i].room == current_room && strcmp(items[i].name, noun) == 0) {
-                items[i].room = 255; // In Inventar
-                print_line("TAKEN", true, false);
-                found = true;
-                break;
+                if (items[i].type == 'U') {
+                    items[i].room = 255; // In Inventar
+                    print_line("ITEM TAKEN", true, false);
+                    found = true;
+                    break;
+                } else {
+                    print_line("YOU CAN'T TAKE THAT", true, false);
+                    return;
+                }
             }
         }
         if (!found) {
@@ -99,11 +108,11 @@ void parse(char *verb, char *noun) {
         for (i = 0; i < NUM_ITEMS; i++) {
             if (items[i].room == current_room){
                 cprintf("\r\n\r\n%s - %s\r\n", items[i].name, items[i].description);
-                itemFound = true;
+                found = true;
             }
         }
 
-        if (!itemFound) {
+        if (!found) {
             cprintf ("NONE\r\n\r\n");
         }
 
@@ -155,12 +164,66 @@ void parse(char *verb, char *noun) {
     } else if (strcmp(verb, "HELP") == 0){
         clrscr();
         print_line("AVAILABLE COMMANDS\r\n", true, true);
-        print_line("DROP <ITEM NAME>   -  Drop an item", true, false);
-        print_line("GO   <LOCATION>    -  Go somewhere", true, false);
-        print_line("INV                -  Show inventory", true, false);
-        print_line("LOOK               -  Look around", true, false);
-        print_line("DROP <ITEM>        -  Drop an item", true, false);
-        print_line("DROP               -  Quit the game", true, false);
+        print_line("drop <ITEM NAME>   -  Drop an item", true, false);
+        print_line("go   <LOCATION>    -  Go somewhere", true, false);
+        print_line("inv                -  Show inventory", true, false);
+        print_line("look               -  Look around", true, false);
+        print_line("quit               -  Quit the game", true, false);
+        print_line("use <item> <item>  -  Use item on item", true, false);
+
+    } else if (strcmp(verb, "USE") == 0){
+
+        clrscr();
+
+        if (!noun) {
+            print_line("USE WHAT?", true, false);
+            return;
+        }
+
+        if (!object) {
+            print_line("USE ON WHAT?", true, false);
+            return;
+        }
+
+        hasItem = false;
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == 255 && strcmp(items[i].name, noun) == 0) {
+                hasItem = true;
+                break;
+            }
+        }
+
+        if (!hasItem) {
+            print_line("YOU DON'T HAVE THAT.", true, false);
+            return;
+        }
+
+        targetHere = false;
+        for (i = 0; i < NUM_ITEMS; i++) {
+            if (items[i].room == current_room && strcmp(items[i].name, object) == 0) {
+                targetHere = true;
+                break;
+            }
+        }
+
+        if (!targetHere) {
+            print_line("YOU DON'T SEE THAT HERE.", true, false);
+            return;
+        }
+
+        ruleFound = false;
+        for (i = 0; i < NUM_USE_RULES; i++) {
+            if (strcmp(noun, useRules[i].item) == 0 &&
+                strcmp(object, useRules[i].target) == 0) {
+                useRules[i].action();
+                ruleFound = true;
+                break;
+            }
+        }
+
+        if (!ruleFound) {
+            print_line("THAT DOESN'T WORK.", true, false);
+        }
     } else {
         clrscr();
         cprintf("\r\nUNKNOWN: %s\r\n", verb);

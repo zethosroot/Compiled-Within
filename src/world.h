@@ -19,7 +19,15 @@ typedef struct {
     unsigned char room; // Raum-Index, 255 = im Inventar
 } Item;
 
+// Nutzungsregeln
+typedef struct {
+    char* item;
+    char* target;
+    void (*action)(void);
+} UseRule;
+
 extern Room rooms[];
 extern Item items[];
+extern UseRule useRules[];
 
 #endif

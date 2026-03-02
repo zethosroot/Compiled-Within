@@ -2,6 +2,6 @@
 #define PARSE_H
 
 // Funktion deklarieren
-void parse(char *verb, char *noun);
+void parse(char *verb, char *object, char *noun);
 
 #endif

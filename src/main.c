@@ -25,7 +25,8 @@ int main(void) {
     unsigned char inputText[INPUT_LENGTH];
 
     char *verb = NULL;
-    char * noun = NULL;
+    char *object = NULL;
+    char *noun = NULL;
 
     // Farbe setzen
     VIC.bordercolor = 0;
@@ -54,10 +55,11 @@ int main(void) {
         str_upper(inputText); // Text Großbuchstaben setzen
 
         // Tokenisierung
-        verb = strtok(inputText, " ");
-        noun = strtok(NULL, " ");
+        verb   = strtok(inputText, " ");
+        noun   = strtok(NULL, " ");
+        object = strtok(NULL, " ");
 
-        parse(verb, noun);
+        parse(verb, object, noun);
 
         cprintf("\r\n");
     }
@@ -84,6 +86,6 @@ void start() {
 
     current_room = 0;
     hasStarted = true;
-    parse("LOOK", NULL);
+    parse("LOOK", NULL, NULL);
 }
 
