@@ -14,7 +14,6 @@ void parse(char *verb, char *object, char *noun) {
     unsigned char next_room = 255;
     int i; // Für die For-Schleife
     bool found      = false; // Ist das Item gefunden?
-    //bool itemFound  = false; // Etwas Items gefunden
     bool hasItem    = false; // Spieler hat das item
     bool ruleFound  = false; // Regel gefunden
     bool targetHere = false; // Ziel ist im aktuell Zimmer
