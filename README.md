@@ -67,7 +67,7 @@ Transfer `build/adventure.prg` to a `.d64` disk image or use a device like an SD
 | `INV` | Show inventory |
 | `HELP` | List available commands |
 | `QUIT` | Quit the game |
-| `USE` | Use an item on a static item |
+| `USE <item> <target>` | Use an item on a static item |
 
 ---
 
