@@ -168,7 +168,7 @@ void parse(char *verb, char *object, char *noun) {
         print_line("inv                -  Show inventory", true, false);
         print_line("look               -  Look around", true, false);
         print_line("quit               -  Quit the game", true, false);
-        print_line("use <item> <item>  -  Use item on item", true, false);
+        print_line("use <item> <target>-  Use item on item", true, false);
 
     } else if (strcmp(verb, "USE") == 0){
 
