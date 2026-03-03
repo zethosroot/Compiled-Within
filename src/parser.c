@@ -166,7 +166,7 @@ void parse(char *verb, char *object, char *noun) {
         print_line("drop <ITEM NAME>   -  Drop an item", true, false);
         print_line("go   <LOCATION>    -  Go somewhere", true, false);
         print_line("inv                -  Show inventory", true, false);
-        print_line("look               -  Look around", true, false);
+        print_line("look               -  Describe room", true, false);
         print_line("quit               -  Quit the game", true, false);
         print_line("use <item> <target>-  Use item on item", true, false);
 
